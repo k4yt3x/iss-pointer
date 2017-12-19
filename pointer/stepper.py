@@ -8,9 +8,11 @@ class GPIO(Enum):
     HIGH = 1
     LOW = 0
 
+
 class DIRECTION(Enum):
     CW = 1
     CCW = 0
+
 
 class Stepper(object):
 
@@ -37,7 +39,7 @@ class Stepper(object):
         self.step_delay = 0.001
         self._microstep_resolution = 'eigth'
         self._direction = DIRECTION.CW
-        self._azimuth = 0.0 # in degrees from true north
+        self._azimuth = 0.0  # in degrees from true north
 
         self.setup()
 
@@ -54,7 +56,7 @@ class Stepper(object):
             self._direction = direction
         else:
             raise InvalidDirectionError
-    
+
     @property
     def microstep_resolution(self):
         return self._microstep_resolution
@@ -66,7 +68,7 @@ class Stepper(object):
         else:
             self._microstep_resolution = resolution
         self.set_microstep_resolution_in_easydriver()
-                
+
     @property
     def azimuth(self):
         return self._azimuth
@@ -75,7 +77,7 @@ class Stepper(object):
         ms1, ms2 = self.MICROSTEP_TRUTH_TABLE[self._microstep_resolution]
         wp.digitalWrite(self.ms1_pin, ms1)
         wp.digitalWrite(self.ms2_pin, ms2)
- 
+
     def setup(self):
         wp.pinMode(self.dir_pin, wp.GPIO.OUTPUT)
         wp.pinMode(self.step_pin, wp.GPIO.OUTPUT)
@@ -84,9 +86,11 @@ class Stepper(object):
 
     def step(self):
         # 0.9 degrees per step * resolution * gear_ratio
-        # This is probably the wrong way to do this but it works. It would be 
+        # This is probably the wrong way to do this but it works. It would be
         # good to rethink how this could work.
-        degrees_moved = 0.9 * self.MICROSTEP_RESOLUTION_MULTIPLIER[self._microstep_resolution] * self.GEAR_RATIO
+        degrees_moved = 0.9 * \
+            self.MICROSTEP_RESOLUTION_MULTIPLIER[self._microstep_resolution] * \
+            self.GEAR_RATIO
         if self._direction == DIRECTION.CCW:
             degrees_moved = -degrees_moved
         self._azimuth += degrees_moved
@@ -94,26 +98,27 @@ class Stepper(object):
         sleep(self.step_delay)
         wp.digitalWrite(self.step_pin, 0)
         sleep(self.step_delay)
-    
+
     def teardown(self):
         wp.pinMode(self.dir_pin, wp.GPIO.INPUT)
         wp.pinMode(self.step_pin, wp.GPIO.INPUT)
         wp.pinMode(self.ms1_pin, wp.GPIO.INPUT)
         wp.pinMode(self.ms2_pin, wp.GPIO.INPUT)
 
+
 if __name__ == '__main__':
-    wiringpi.wiringPiSetupGpio()
-    wiringpi.pinMode(24, wiringpi.GPIO.OUTPUT)
-    wiringpi.pinMode(17, wiringpi.GPIO.OUTPUT)
-    wiringpi.pinMode(27, wiringpi.GPIO.OUTPUT)
+    wp.wiringPiSetupGpio()
+    wp.pinMode(24, wp.GPIO.OUTPUT)
+    wp.pinMode(17, wp.GPIO.OUTPUT)
+    wp.pinMode(27, wp.GPIO.OUTPUT)
     # Microstepping pins
-    wiringpi.digitalWrite(17, 1)
-    wiringpi.digitalWrite(27, 1)
+    wp.digitalWrite(17, 1)
+    wp.digitalWrite(27, 1)
     # Rotate
-    for i in xrange(0, int(8*400*2.5)):
-        wiringpi.digitalWrite(24, 1)
-        time.sleep(0.0005)
-        wiringpi.digitalWrite(24, 0)
-    wiringpi.pinMode(24, wiringpi.GPIO.INPUT)
-    wiringpi.pinMode(17, wiringpi.GPIO.INPUT)
-    wiringpi.pinMode(27, wiringpi.GPIO.INPUT)
+    for i in range(0, int(8 * 400 * 2.5)):
+        wp.digitalWrite(24, 1)
+        sleep(0.0005)
+        wp.digitalWrite(24, 0)
+    wp.pinMode(24, wp.GPIO.INPUT)
+    wp.pinMode(17, wp.GPIO.INPUT)
+    wp.pinMode(27, wp.GPIO.INPUT)
