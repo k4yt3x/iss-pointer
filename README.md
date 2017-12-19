@@ -20,7 +20,7 @@ TODO
 ~~~~
 
 ## GPIO Header
-![Pi3 GPIO Header Image](https://www.element14.com/community/servlet/JiveServlet/previewBody/73950-102-11-339300/pi3_gpio.png)
+![pi3_gpio](https://user-images.githubusercontent.com/21986859/34141154-78ec6628-e44d-11e7-8ef6-7ffcb87f79a1.png)
 
 Pin # | Name | Name 	   | Pin #
 ------|------|-------------|------
