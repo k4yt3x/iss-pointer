@@ -1,7 +1,26 @@
-# isspointer
+# Raspberry Pi ISS Pointer
+
+Dev: djgood@github.com  
+Dev: k4yt3x@github.com  
+Date Created: N/A  
+Last Modified: Dec 18, 2017
+
+## Current Version: 0.1 alpha
+
+## Change Logs:
+1. Project Imported
+
+## Description
+The raspberry pi ISS Pointer is a simple device that will always point to the current location of the International Space Station (ISS).
+This project is initialized as an ISU project.
+
+## Usage
+~~~~
+TODO
+~~~~
 
 ## GPIO Header
-![Pi3 GPIO Header Image](https://github.com/djgood/isspointer/blob/master/pi3gpioheader.jpg)
+![Pi3 GPIO Header Image](https://github.com/djgood/isspointer/raw/master/pi3gpioheader.jpg)
 
 Pin # | Name | Name 	   | Pin #
 ------|------|-------------|------
@@ -26,5 +45,5 @@ Pin # | Name | Name 	   | Pin #
  37   |      |             | 38
  39   |      |             | 40
 
-It's important to note to always reset these pins back to the input mode to avoid
-frying them. 
+**It's important to note to always reset these pins back to the input mode to avoid
+frying them.**
