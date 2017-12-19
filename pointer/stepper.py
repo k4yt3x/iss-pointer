@@ -33,8 +33,6 @@ class Stepper(object):
 
     def __init__(self, dir_pin, step_pin, ms1_pin, ms2_pin):
         self.dir_pin = dir_pin
-        self.step_pin = step_pin
-        self.ms1_pin = ms1_pin
         self.ms2_pin = ms2_pin
         self.step_delay = 0.001
         self._microstep_resolution = 'eigth'
@@ -86,6 +84,8 @@ class Stepper(object):
 
     def step(self):
         # 0.9 degrees per step * resolution * gear_ratio
+        # This is probably the wrong way to do this but it works. It would be 
+        # good to rethink how this could work.
         degrees_moved = 0.9 * self.MICROSTEP_RESOLUTION_MULTIPLIER[self._microstep_resolution] * self.GEAR_RATIO
         if self._direction == DIRECTION.CCW:
             degrees_moved = -degrees_moved
@@ -101,3 +101,19 @@ class Stepper(object):
         wp.pinMode(self.ms1_pin, wp.GPIO.INPUT)
         wp.pinMode(self.ms2_pin, wp.GPIO.INPUT)
 
+if __name__ == '__main__':
+    wiringpi.wiringPiSetupGpio()
+    wiringpi.pinMode(24, wiringpi.GPIO.OUTPUT)
+    wiringpi.pinMode(17, wiringpi.GPIO.OUTPUT)
+    wiringpi.pinMode(27, wiringpi.GPIO.OUTPUT)
+    # Microstepping pins
+    wiringpi.digitalWrite(17, 1)
+    wiringpi.digitalWrite(27, 1)
+    # Rotate
+    for i in xrange(0, int(8*400*2.5)):
+        wiringpi.digitalWrite(24, 1)
+        time.sleep(0.0005)
+        wiringpi.digitalWrite(24, 0)
+    wiringpi.pinMode(24, wiringpi.GPIO.INPUT)
+    wiringpi.pinMode(17, wiringpi.GPIO.INPUT)
+    wiringpi.pinMode(27, wiringpi.GPIO.INPUT)
