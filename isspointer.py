@@ -28,6 +28,7 @@ import avalon_framework as avl
 import urllib.request
 import json
 import ephem
+import time
 
 
 class debug:
@@ -54,6 +55,7 @@ class Isspointer:
         # self.motor = self._setup_motor()
         # self.servo = self._setup_servo()
         self.lat, self.lon = self._get_ISS_coordinates()
+        self.motor = self._setup_motor()
 
     def _setup_motor(self):
         return Stepper(12, 11, 13, 15)
@@ -120,19 +122,22 @@ class Isspointer:
         iss_default_tle = "ISS (ZARYA)", "1 25544U 98067A   18014.73214213  .00001932  00000-0  36199-4 0  9994", "2 25544  51.6432  63.7165 0003502  15.7107  89.3601 15.54306558 94655"
         observer = ephem.Observer()
         observer.lon, observer.lat = '43.435296', '-80.464363'
-        now = "{}/{}/{} {}:{}:{}".format(datetime.now().year, datetime.now().month, datetime.now().day, datetime.now().hour, datetime.now().minute, datetime.now().second)
-        observer.date = now
-        print(now)
+        while True:
+            now = "{}/{}/{} {}:{}:{}".format(datetime.now().year, datetime.now().month, datetime.now().day, datetime.now().hour, datetime.now().minute, datetime.now().second)
+            observer.date = now
+            print(now)
 
-        iss_live_tle = self._get_iss_tle()
-        if iss_live_tle:
-            iss_tle = iss_live_tle
-        else:
-            iss_tle = iss_default_tle
+            iss_live_tle = self._get_iss_tle()
+            if iss_live_tle:
+                iss_tle = iss_live_tle
+            else:
+                iss_tle = iss_default_tle
 
-        iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
-        iss.compute(observer)
-        print('Elevation:{} Azimuth:{}'.format(iss.alt, iss.az))
+            iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
+            iss.compute(observer)
+            print('Elevation:{} Azimuth:{}'.format(iss.alt, iss.az))
+            self.motor.set_azimuth(iss.az)
+            time.sleep(2)
 
 
 if __name__ == "__main__":
