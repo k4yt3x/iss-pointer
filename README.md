@@ -1,13 +1,15 @@
 # Raspberry Pi ISS Pointer
 
-Dev: djgood@github.com  
-Dev: k4yt3x@github.com  
-Date Created: N/A  
-Last Modified: Dec 18, 2017
+Dev: djgood@github.com
+Dev: k4yt3x@github.com
+Date Created: Dec 16, 2017
+Last Modified: jan 16, 2017
 
-## Current Version: 0.1 alpha
+## Current Version: 0.2 alpha
 
 ## Change Logs:
+1. Added main controller
+1. Fixed motor controller
 1. Project Imported
 
 ## Description
