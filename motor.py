@@ -116,7 +116,7 @@ class Stepper(object):
         sleep(self.step_delay)
 
     def set_azimuth(self, angle):
-        steps = angle * 2.5 * 10/9
+        steps = round(angle * 2.5 * 10/9)
         for _ in range(steps):
             self.step()
 
