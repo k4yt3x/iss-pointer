@@ -52,16 +52,15 @@ class Isspointer:
     """
 
     def __init__(self):
-        # self.motor = self._setup_motor()
-        # self.servo = self._setup_servo()
         self.lat, self.lon = self._get_ISS_coordinates()
         self.motor = self._setup_motor()
+        self.servo = self._setup_servo()
 
     def _setup_motor(self):
         return Stepper(12, 11, 13, 15)
 
     def _setup_servo(self):
-        return Servo()
+        return Servo(16)
 
     def _get_ISS_coordinates(self):
         """
@@ -137,6 +136,7 @@ class Isspointer:
             iss.compute(observer)
             print('Elevation:{} Azimuth:{}'.format(iss.alt, iss.az))
             self.motor.set_azimuth(iss.az)
+            self.servo.set_angle(iss.alt)
             time.sleep(2)
 
 

@@ -17,7 +17,7 @@ class Servo:
     def _convert_angle(self, angle):
         return (angle * (1 / 18)) + 2.5
 
-    def servo_change(self, angle):
+    def set_angle(self, angle):
         angle += 90
         self.pin.ChangeDutyCycle(self._convert_angle(angle))
         time.sleep(1)
@@ -26,4 +26,4 @@ class Servo:
 if __name__ == "__main__":
     servo = Servo(16)
     while True:
-        servo.servo_change(int(input("Angle: ")))
+        servo.set_angle(int(input("Angle: ")))
