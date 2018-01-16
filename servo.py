@@ -28,4 +28,4 @@ class Servo:
 if __name__ == "__main__":
     servo = Servo(16)
     while True:
-        servo.set_angle(int(input("Angle: ")))
+        servo.set_angle(float(input("Angle: ")))
