@@ -111,17 +111,13 @@ class Stepper(object):
         sleep(self.step_delay)
 
     def rotate(self, angle):
-        """
-        CW
-        """
         steps = round(angle * 2.5 * 10 / 9)
+        if self.current_pos + steps < 400:
+            self.current_pos = self.current_pos + steps
+        else:
+            self.current_pos = self.current_pos + steps - 400
         for _ in range(steps):
             self.step()
-            if self.current_pos < 400:
-                self.current_pos += 1
-            else:
-                self.current_pos = 0
-                self.current_pos += 1
 
     def set_azimuth(self, azimuth):
         print(self.current_pos)
