@@ -134,7 +134,7 @@ class Isspointer:
 
             iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
             iss.compute(observer)
-            print('Elevation:{} Azimuth:{}'.format(iss.alt, iss.az))
+            print('Elevation:{} Azimuth:{}'.format(ephem.degrees(iss.alt), iss.az))
             print(type(iss.alt))
             self.motor.set_azimuth(iss.az)
             self.servo.set_angle(iss.alt)
