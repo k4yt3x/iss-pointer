@@ -39,6 +39,7 @@ class Stepper(object):
     }
 
     def __init__(self, dir_pin, step_pin, ms1_pin, ms2_pin):
+        GPIO.setmode(GPIO.BOARD)
         self.dir_pin = dir_pin
         self.step_pin = step_pin
         self.ms1_pin = ms1_pin
@@ -85,7 +86,6 @@ class Stepper(object):
         GPIO.output(self.ms2_pin, ms2)
 
     def setup(self):
-        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.dir_pin, GPIO.OUT)
         GPIO.setup(self.step_pin, GPIO.OUT)
         GPIO.setup(self.ms1_pin, GPIO.OUT)
@@ -126,7 +126,6 @@ class Stepper(object):
             self.step()
 
     def set_azimuth(self, azimuth):
-        GPIO.setmode(GPIO.BOARD)
         print(self.current_pos)
         current_angle = 0.36 * self.current_pos
         angle_to_rotate = azimuth - current_angle
@@ -134,6 +133,7 @@ class Stepper(object):
         if angle_to_rotate == 0:
             pass
         elif angle_to_rotate > 0:
+            GPIO.output(self.dir_pin, 0)
             self.rotate(angle_to_rotate)
         elif angle_to_rotate < 0:
             GPIO.output(self.dir_pin, 1)

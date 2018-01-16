@@ -7,6 +7,9 @@ class Servo:
     def __init__(self, pin):
         self.pin = pin
 
+    def __del__(self):
+        GPIO.cleanup()
+
     def _setup(self):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin, GPIO.OUT)
@@ -22,7 +25,6 @@ class Servo:
         self.p.start(self._convert_angle(angle))
         time.sleep(1)
         self.p.stop()
-        GPIO.cleanup()
 
 
 if __name__ == "__main__":
