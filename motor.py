@@ -110,12 +110,18 @@ class Stepper(object):
         GPIO.output(self.step_pin, 0)
         sleep(self.step_delay)
 
-    def rotate(self, angle):
+    def rotate(self, angle, cw=True):
         steps = round(angle * 2.5 * 10 / 9)
-        if self.current_pos + steps < 1000:
-            self.current_pos = self.current_pos + steps
-        else:
-            self.current_pos = self.current_pos + steps - 1000
+        if cw:
+            if self.current_pos + steps < 1000:
+                self.current_pos = self.current_pos + steps
+            else:
+                self.current_pos = self.current_pos + steps - 1000
+        elif not cw:
+            if self.current_pos - steps > 0:
+                self.current_pos = self.current_pos - steps
+            else:
+                self.current_pos = self.current_pos - steps + 1000
         for _ in range(steps):
             self.step()
 
