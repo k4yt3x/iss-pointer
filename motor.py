@@ -124,18 +124,19 @@ class Stepper(object):
                 self.current_pos += 1
 
     def set_azimuth(self, azimuth):
+        print(self.current_pos)
         current_angle = self.current_pos * 10 / 9
         angle_to_rotate = azimuth - current_angle
         print(current_angle)
         if angle_to_rotate == 0:
             pass
         elif angle_to_rotate > 0:
-            #GPIO.output(self.dir_pin, 0)
+            GPIO.output(self.dir_pin, 0)
             self.rotate(angle_to_rotate)
         elif angle_to_rotate < 0:
-            #GPIO.output(self.dir_pin, 1)
+            GPIO.output(self.dir_pin, 1)
             self.rotate(-1 * angle_to_rotate)
-            #GPIO.output(self.dir_pin, 0)
+            GPIO.output(self.dir_pin, 0)
 
     def teardown(self):
         GPIO.cleanup()
