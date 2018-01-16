@@ -134,7 +134,6 @@ class Stepper(object):
         if angle_to_rotate == 0:
             pass
         elif angle_to_rotate > 0:
-            GPIO.output(self.dir_pin, 0)
             self.rotate(angle_to_rotate)
         elif angle_to_rotate < 0:
             GPIO.output(self.dir_pin, 1)
