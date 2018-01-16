@@ -121,7 +121,7 @@ class Stepper(object):
 
     def set_azimuth(self, azimuth):
         print(self.current_pos)
-        current_angle = self.current_pos * 10 / 9
+        current_angle = self.current_pos / 2.5 * 10 / 9
         angle_to_rotate = azimuth - current_angle
         print(current_angle)
         if angle_to_rotate == 0:
