@@ -13,11 +13,11 @@ class Servo:
         self.p = GPIO.PWM(self.pin, 50)
 
     def _convert_angle(self, angle):
-        return angle  # (angle * (1 / 18)) + 2.5
+        return (angle * 9.4 / 180) + 2.3
 
     def set_angle(self, angle):
-        #angle *= -1
-        #angle += 90
+        angle *= -1
+        angle += 90
         self._setup()
         self.p.start(self._convert_angle(angle))
         time.sleep(1)
