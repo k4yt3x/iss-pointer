@@ -29,6 +29,7 @@ import urllib.request
 import json
 import ephem
 import time
+import math
 
 
 class debug:
@@ -134,8 +135,8 @@ class Isspointer:
 
             iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
             iss.compute(observer)
-            print('Elevation:{} Azimuth:{}'.format(ephem.degrees(iss.alt), iss.az))
-            print(type(iss.alt))
+            print('Elevation:{} Azimuth:{}'.format(iss.alt.dec * 180 / math.pi, iss.az.dec * 180 / math.pi))
+            print(type(iss.alt.dec * 180 / math.pi))
             self.motor.set_azimuth(iss.az)
             self.servo.set_angle(iss.alt)
             time.sleep(2)
