@@ -103,7 +103,7 @@ class Stepper(object):
         This is probably the wrong way to do this but it works. It would be
         good to rethink how this could work.
         """
-        GPIO.output(self.dir_pin, 1)
+
         GPIO.output(self.step_pin, 1)
         sleep(self.step_delay)
         GPIO.output(self.step_pin, 0)
@@ -128,11 +128,12 @@ class Stepper(object):
         if angle_to_rotate == 0:
             pass
         elif angle_to_rotate > 0:
-            self.direction = DIRECTION.CW
+            GPIO.output(self.dir_pin, 0)
             self.rotate(angle_to_rotate)
         elif angle_to_rotate < 0:
-            self.direction = DIRECTION.CCW
+            GPIO.output(self.dir_pin, 1)
             self.rotate(-1 * angle_to_rotate)
+            GPIO.output(self.dir_pin, 0)
 
     def teardown(self):
         GPIO.cleanup()
