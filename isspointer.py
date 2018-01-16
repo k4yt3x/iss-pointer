@@ -136,7 +136,7 @@ class Isspointer:
             iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
             iss.compute(observer)
             avl.info("ISS Position Update:")
-            print('Elevation:{}\nAzimuth:{}\n'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
+            print('Elevation :{}\nAzimuth :{}\n'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
             self.motor.set_azimuth(float(iss.az) * 180 / math.pi)
             self.servo.set_angle(float(iss.alt) * 180 / math.pi)
             time.sleep(2)
