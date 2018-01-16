@@ -47,6 +47,7 @@ class Stepper(object):
         self._microstep_resolution = 'full'
         self._direction = DIRECTION.CW
         self._azimuth = 0.0  # in degrees from true north
+        self.current_pos = 0
 
         self.setup()
 
@@ -115,11 +116,30 @@ class Stepper(object):
         GPIO.output(self.step_pin, 0)
         sleep(self.step_delay)
 
-    def set_azimuth(self, angle):
-        steps = round(angle * 2.5 * 10/9)
+    def rotate(self, angle):
+        """
+        CW
+        """
+        steps = round(angle * 2.5 * 10 / 9)
         for _ in range(steps):
             self.step()
+            if self.current_pos < 400:
+                self.current_pos += 1
+            else:
+                self.current_pos = 0
+                self.current_pos += 1
 
+    def set_azimuth(self, azimuth):
+        current_angle = self.current_pos * 10 / 9
+        angle_to_rotate = azimuth - current_angle
+        if angle_to_rotate == 0:
+            pass
+        elif angle_to_rotate > 0:
+            self.direction = DIRECTION.CW
+            self.rotate(angle_to_rotate)
+        elif angle_to_rotate < 0:
+            self.direction = DIRECTION.CCW
+            self.rotate(-1 * angle_to_rotate)
 
     def teardown(self):
         GPIO.cleanup()
