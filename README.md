@@ -28,13 +28,13 @@ Pin # | Name | Name 	   | Pin #
 ------|------|-------------|------
  1    |      | Servo V+    | 2
  3    |      |      	   | 4
- 5    |      | 	           | 6
+ 5    |      | Servo GND  | 6
  7    |      |       	   | 8
- 9    |      |             | 10
- 11   | MS1  | Servo Ctrl  | 12
- 13   | MS2  | GND  	   | 14
- 15   |      | Stepper Dir | 16
- 17   |      | Stepper Step | 18
+ 9    | Stepper Ground  |             | 10
+ 11   | Step  | Dir  | 12
+ 13   | MS1  | GND  	   | 14
+ 15   | MS2  | Servo Ctrl | 16
+ 17   |      |             | 18
  19   |      | 		   | 20
  21   |      |             | 22
  23   |      |             | 24

@@ -115,6 +115,12 @@ class Stepper(object):
         GPIO.output(self.step_pin, 0)
         sleep(self.step_delay)
 
+    def set_azimuth(self, angle):
+        steps = angle * 2.5 * 10/9
+        for _ in range(steps):
+            self.step()
+
+
     def teardown(self):
         GPIO.cleanup()
 
@@ -122,5 +128,4 @@ class Stepper(object):
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BOARD)
     stepper = Stepper(12, 11, 13, 15)
-    for _ in range(360*4):
-        stepper.step()
+
