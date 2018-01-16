@@ -39,6 +39,7 @@ class Stepper(object):
     }
 
     def __init__(self, dir_pin, step_pin, ms1_pin, ms2_pin):
+        GPIO.setmode(GPIO.BOARD)
         self.dir_pin = dir_pin
         self.step_pin = step_pin
         self.ms1_pin = ms1_pin
