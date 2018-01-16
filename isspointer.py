@@ -137,8 +137,8 @@ class Isspointer:
             iss.compute(observer)
             print('Elevation:{} Azimuth:{}'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
             print(type(iss.alt))
-            self.motor.set_azimuth(iss.az)
-            self.servo.set_angle(iss.alt)
+            self.motor.set_azimuth(float(iss.az) * 180 / math.pi)
+            self.servo.set_angle(float(iss.alt) * 180 / math.pi)
             time.sleep(2)
 
 
