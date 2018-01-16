@@ -85,6 +85,7 @@ class Stepper(object):
         GPIO.output(self.ms2_pin, ms2)
 
     def setup(self):
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.dir_pin, GPIO.OUT)
         GPIO.setup(self.step_pin, GPIO.OUT)
         GPIO.setup(self.ms1_pin, GPIO.OUT)
