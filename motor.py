@@ -112,10 +112,10 @@ class Stepper(object):
 
     def rotate(self, angle):
         steps = round(angle * 2.5 * 10 / 9)
-        if self.current_pos + steps < 400:
+        if self.current_pos + steps < 1000:
             self.current_pos = self.current_pos + steps
         else:
-            self.current_pos = self.current_pos + steps - 400
+            self.current_pos = self.current_pos + steps - 1000
         for _ in range(steps):
             self.step()
 
