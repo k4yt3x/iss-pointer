@@ -45,8 +45,6 @@ class Stepper(object):
         self.ms2_pin = ms2_pin
         self.step_delay = 0.001
         self._microstep_resolution = 'full'
-        self._direction = DIRECTION.CW
-        self._azimuth = 0.0  # in degrees from true north
         self.current_pos = 0
 
         self.setup()
@@ -105,15 +103,9 @@ class Stepper(object):
         This is probably the wrong way to do this but it works. It would be
         good to rethink how this could work.
         """
-        degrees_moved = 0.9 * \
-            self.MICROSTEP_RESOLUTION_MULTIPLIER[self._microstep_resolution] * \
-            self.GEAR_RATIO
-        if self._direction == DIRECTION.CCW:
-            degrees_moved = -degrees_moved
-        self._azimuth += degrees_moved
-        GPIO.output(self.step_pin, 1)
-        sleep(self.step_delay)
         GPIO.output(self.step_pin, 0)
+        sleep(self.step_delay)
+        GPIO.output(self.step_pin, 1)
         sleep(self.step_delay)
 
     def rotate(self, angle):
