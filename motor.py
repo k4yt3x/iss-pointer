@@ -128,4 +128,6 @@ class Stepper(object):
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BOARD)
     stepper = Stepper(12, 11, 13, 15)
+    while True:
+        stepper.set_azimuth(int(input("Angle: ")))
 
