@@ -137,7 +137,7 @@ class Stepper(object):
             self.rotate(angle_to_rotate)
         elif angle_to_rotate < 0:
             GPIO.output(self.dir_pin, 1)
-            self.rotate(-1 * angle_to_rotate)
+            self.rotate(-1 * angle_to_rotate, False)
             GPIO.output(self.dir_pin, 0)
 
     def teardown(self):
