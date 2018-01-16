@@ -77,7 +77,7 @@ class Isspointer:
         req = urllib.request.Request("http://api.open-notify.org/iss-now.json")
         response = urllib.request.urlopen(req)
 
-        obj = json.loads(response.read())
+        obj = json.loads(response.read().decode('utf-8'))
         return obj['iss_position']['latitude'], obj['iss_position']['longitude']
 
     def _get_iss_tle(self):
