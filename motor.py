@@ -39,7 +39,6 @@ class Stepper(object):
     }
 
     def __init__(self, dir_pin, step_pin, ms1_pin, ms2_pin):
-        GPIO.setmode(GPIO.BOARD)
         self.dir_pin = dir_pin
         self.step_pin = step_pin
         self.ms1_pin = ms1_pin
@@ -86,6 +85,7 @@ class Stepper(object):
         GPIO.output(self.ms2_pin, ms2)
 
     def setup(self):
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.dir_pin, GPIO.OUT)
         GPIO.setup(self.step_pin, GPIO.OUT)
         GPIO.setup(self.ms1_pin, GPIO.OUT)
@@ -149,4 +149,3 @@ if __name__ == '__main__':
     stepper = Stepper(12, 11, 13, 15)
     while True:
         stepper.set_azimuth(int(input("Angle: ")))
-
