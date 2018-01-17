@@ -168,7 +168,6 @@ class Isspointer:
 
 if __name__ == "__main__":
     print_icon()
-    exit()
     isspointer = Isspointer()  # Creates ISS pointer object
     isspointer.start()  # Starts the pointer
 else:
