@@ -158,6 +158,7 @@ class Isspointer:
                 iss_tle = iss_default_tle
 
             iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
+            print(iss_tle)
             iss.compute(observer)
             avl.info("ISS Position Update:")
             print('Elevation :{}\nAzimuth :{}\n'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
