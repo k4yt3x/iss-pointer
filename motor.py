@@ -14,6 +14,8 @@ from enum import Enum
 from time import sleep
 from exception import InvalidDirectionError
 
+VERSION = "1.0 beta"
+
 
 class DIRECTION(Enum):
     CW = 1
