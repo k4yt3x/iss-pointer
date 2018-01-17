@@ -17,17 +17,34 @@ Description: This is the main script of the ISS Pointer.
 It creats objects of the motor contoller and the servo controller.servo
 """
 
-try:  # This try needs to go so we can trace errors
-    from motor import Stepper
-    from servo import Servo
-except Exception:
-    pass
+# The motor controller and servo controller
+from motor import Stepper
+from servo import Servo
+
 from datetime import datetime
 import avalon_framework as avl
-
-import urllib.request
-import json
 import ephem
+import json
+import math
+import time
+import urllib.request
+
+VERSION = "1.0 beta"
+
+
+def print_icon():
+    """
+    This prints the awsome ISS Pointer
+    project icon!
+    """
+    print('   ___   ____    ____      ____     ____')
+    print('  |_ _| / ___|  / ___|    |  _ \   / ___|')
+    print('   | |  \___ \  \___ \    | |_) | | |')
+    print('   | |   ___) |  ___) |   |  __/  | |___')
+    print('  |___| |____/  |____/    |_|      \____|\n')
+    desc = "A Simple machine that points to the ISS\n"
+    print((42 - len(desc)) // 2 * ' ' + desc)
+    print((39 - len(VERSION)) // 2 * ' ' + avl.FG.Y + VERSION + avl.FM.RST + '\n')
 
 
 class debug:
@@ -51,15 +68,23 @@ class Isspointer:
     """
 
     def __init__(self):
-        # self.motor = self._setup_motor()
-        # self.servo = self._setup_servo()
         self.lat, self.lon = self._get_ISS_coordinates()
+        self.motor = self._setup_motor()
+        self.servo = self._setup_servo()
 
     def _setup_motor(self):
+        """
+        Creates and returns an object
+        of the Stepper motor controller
+        """
         return Stepper(12, 11, 13, 15)
 
     def _setup_servo(self):
-        return Servo()
+        """
+        Creates and returns an object
+        of the Servo controller
+        """
+        return Servo(16)
 
     def _get_ISS_coordinates(self):
         """
@@ -75,7 +100,7 @@ class Isspointer:
         req = urllib.request.Request("http://api.open-notify.org/iss-now.json")
         response = urllib.request.urlopen(req)
 
-        obj = json.loads(response.read())
+        obj = json.loads(response.read().decode('utf-8'))
         return obj['iss_position']['latitude'], obj['iss_position']['longitude']
 
     def _get_iss_tle(self):
@@ -91,7 +116,6 @@ class Isspointer:
 
         returns list [tle_line_1, tle_line_2, tle_line_3]
         """
-        return "ISS", "1 25544U 98067A   18015.54922922  .00016717  00000-0  10270-3 0  9007", "2 25544  51.6405  59.6508 0003688  17.3608 342.7670 15.54317764 14777"
         iss_tle = []
         try:
             req = urllib.request.Request("https://www.celestrak.com/NORAD/elements/stations.txt")
@@ -113,30 +137,37 @@ class Isspointer:
         """
         Dev: K4YT3X IZAYOI
         Date Created: Jan 15, 2018
-        Last Modified: Jan 15, 2018
+        Last Modified: Jan 16, 2018
 
         This method is the main ISS pointer controller
         it runs infinitively until Ctrl^C is pressed.
         """
-        iss_default_tle = "ISS", "1 25544U 98067A   18015.54922922  .00016717  00000-0  10270-3 0  9007", "2 25544  51.6405  59.6508 0003688  17.3608 342.7670 15.54317764 14777"
+        iss_default_tle = "ISS (ZARYA)", "1 25544U 98067A   18014.73214213  .00001932  00000-0  36199-4 0  9994", "2 25544  51.6432  63.7165 0003502  15.7107  89.3601 15.54306558 94655"
         observer = ephem.Observer()
         observer.lon, observer.lat = '43.435296', '-80.464363'
-        now = "{}/{}/{} {}:{}:{}".format(datetime.utcnow().year, datetime.utcnow().month, datetime.utcnow().day, datetime.utcnow().hour, datetime.utcnow().minute, datetime.utcnow().second)
-        observer.date = now
-        print(now)
+        while True:
+            now = "{}/{}/{} {}:{}:{}".format(datetime.now().year, datetime.now().month, datetime.now().day, datetime.now().hour, datetime.now().minute, datetime.now().second)
+            observer.date = now
+            print(now)
 
-        iss_live_tle = self._get_iss_tle()
-        if iss_live_tle:
-            iss_tle = iss_live_tle
-        else:
-            iss_tle = iss_default_tle
+            iss_live_tle = self._get_iss_tle()
+            if iss_live_tle:
+                iss_tle = iss_live_tle
+            else:
+                iss_tle = iss_default_tle
 
-        iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
-        iss.compute(observer)
-        print('Elevation:{} Azimuth:{}'.format(iss.alt, iss.az))
+            iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
+            iss.compute(observer)
+            avl.info("ISS Position Update:")
+            print('Elevation :{}\nAzimuth :{}\n'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
+            self.motor.set_azimuth(float(iss.az) * 180 / math.pi)
+            self.servo.set_angle(float(iss.alt) * 180 / math.pi)
+            time.sleep(2)
 
 
 if __name__ == "__main__":
+    print_icon()
+    exit()
     isspointer = Isspointer()  # Creates ISS pointer object
     isspointer.start()  # Starts the pointer
 else:
