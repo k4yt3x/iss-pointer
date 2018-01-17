@@ -143,9 +143,9 @@ class Isspointer:
         This method is the main ISS pointer controller
         it runs infinitively until Ctrl^C is pressed.
         """
-        iss_default_tle = "ISS (ZARYA)", "1 25544U 98067A   18014.73214213  .00001932  00000-0  36199-4 0  9994", "2 25544  51.6432  63.7165 0003502  15.7107  89.3601 15.54306558 94655"
+        iss_default_tle = "ISS", "1 25544U 98067A   18015.54922922  .00016717  00000-0  10270-3 0  9007", "2 25544  51.6405  59.6508 0003688  17.3608 342.7670 15.54317764 14777"
         observer = ephem.Observer()
-        observer.lon, observer.lat = '43.435296', '-80.464363'
+        observer.lat, observer.lon = '43.435296', '-80.464363'
         while True:
             now = "{}/{}/{} {}:{}:{}".format(datetime.utcnow().year, datetime.utcnow().month, datetime.utcnow().day, datetime.utcnow().hour, datetime.utcnow().minute, datetime.utcnow().second)
             observer.date = now
