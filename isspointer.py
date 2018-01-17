@@ -116,6 +116,7 @@ class Isspointer:
 
         returns list [tle_line_1, tle_line_2, tle_line_3]
         """
+        return "ISS", "1 25544U 98067A   18015.54922922  .00016717  00000-0  10270-3 0  9007", "2 25544  51.6405  59.6508 0003688  17.3608 342.7670 15.54317764 14777"
         iss_tle = []
         try:
             req = urllib.request.Request("https://www.celestrak.com/NORAD/elements/stations.txt")
@@ -146,7 +147,7 @@ class Isspointer:
         observer = ephem.Observer()
         observer.lon, observer.lat = '43.435296', '-80.464363'
         while True:
-            now = "{}/{}/{} {}:{}:{}".format(datetime.now().year, datetime.now().month, datetime.now().day, datetime.now().hour, datetime.now().minute, datetime.now().second)
+            now = "{}/{}/{} {}:{}:{}".format(datetime.utcnow().year, datetime.utcnow().month, datetime.utcnow().day, datetime.utcnow().hour, datetime.utcnow().minute, datetime.utcnow().second)
             observer.date = now
             print(now)
 
