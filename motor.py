@@ -6,8 +6,9 @@ Date Created: Dec 16, 2017
 Last Modfied: Dec 18, 2017
 
 Dev: K4YT3X IZAYOI
-Last Modified: Jan 15, 2018
+Last Modified: Jan 16, 2018
 """
+import avalon_framework as avl
 import RPi.GPIO as GPIO
 from enum import Enum
 from time import sleep
@@ -51,7 +52,8 @@ class Stepper(object):
         self.setup()
 
     def __del__(self):
-        self.teardown()
+        # Cleans up GPIO after object deleted
+        GPIO.cleanup()
 
     @property
     def direction(self):
@@ -126,24 +128,39 @@ class Stepper(object):
             self.step()
 
     def set_azimuth(self, azimuth):
+        """
+        Dev: K4YT3X IZAYOI
+        Date Created: Jan 16, 2018
+        Last Modified: Jan 16, 2018
+
+        This is the class that handles the iss pointer.
+        Creating an object of this class will initialize and start
+        the iss pointer.
+        """
+        # 360 degrees / steps per revolution * current steps
         current_angle = 0.36 * self.current_pos
         angle_to_rotate = azimuth - current_angle
-        if angle_to_rotate == 0:
+        if angle_to_rotate == 0:  # Do not rotate when change in angle is 0
             pass
-        elif angle_to_rotate > 0:
+        elif angle_to_rotate > 0:  # Rotate clockwise
             GPIO.output(self.dir_pin, 0)
             self.rotate(angle_to_rotate)
-        elif angle_to_rotate < 0:
+        elif angle_to_rotate < 0:  # Rotate counter-clockwise
+            # Send signal to the direction pin so it rotates ccw
             GPIO.output(self.dir_pin, 1)
             self.rotate(-1 * angle_to_rotate, False)
-            GPIO.output(self.dir_pin, 0)
+            GPIO.output(self.dir_pin, 0)  # Cut signal
 
-    def teardown(self):
-        GPIO.cleanup()
 
+# --------------------------------- Begin Self Testing
+"""
+The code below is for self-testing when this file
+is ran independently. It takes an integer and a direction
+then rotates the motor.
+"""
 
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BOARD)
     stepper = Stepper(12, 11, 13, 15)
     while True:
-        stepper.set_azimuth(int(input("Angle: ")))
+        stepper.rotate(int(avl.gets("Angle")), avl.ask("CW?", True))
