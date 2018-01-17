@@ -147,9 +147,8 @@ class Isspointer:
         observer = ephem.Observer()
         observer.lat, observer.lon = '43.435296', '-80.464363'
         while True:
-            now = "{}/{}/{} {}:{}:{}".format(datetime.utcnow().year, datetime.utcnow().month, datetime.utcnow().day, datetime.utcnow().hour, datetime.utcnow().minute, datetime.utcnow().second)
-            observer.date = now
-            print(now)
+            observer.date = datetime.utcnow()
+            print(datetime.utcnow())
 
             iss_live_tle = self._get_iss_tle()
             if iss_live_tle:
