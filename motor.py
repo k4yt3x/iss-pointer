@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Name: RPi Motor Controller
 Project: ISS Pointer
@@ -6,12 +8,15 @@ Date Created: Dec 16, 2017
 Last Modfied: Dec 18, 2017
 
 Dev: K4YT3X IZAYOI
-Last Modified: Jan 15, 2018
+Last Modified: Jan 16, 2018
 """
+import avalon_framework as avl
 import RPi.GPIO as GPIO
 from enum import Enum
 from time import sleep
 from exception import InvalidDirectionError
+
+VERSION = "1.0 beta"
 
 
 class DIRECTION(Enum):
@@ -39,19 +44,20 @@ class Stepper(object):
     }
 
     def __init__(self, dir_pin, step_pin, ms1_pin, ms2_pin):
+        GPIO.setmode(GPIO.BOARD)
         self.dir_pin = dir_pin
         self.step_pin = step_pin
         self.ms1_pin = ms1_pin
         self.ms2_pin = ms2_pin
         self.step_delay = 0.001
         self._microstep_resolution = 'full'
-        self._direction = DIRECTION.CW
-        self._azimuth = 0.0  # in degrees from true north
+        self.current_pos = 0
 
         self.setup()
 
     def __del__(self):
-        self.teardown()
+        # Cleans up GPIO after object deleted
+        GPIO.cleanup()
 
     @property
     def direction(self):
@@ -104,23 +110,61 @@ class Stepper(object):
         This is probably the wrong way to do this but it works. It would be
         good to rethink how this could work.
         """
-        degrees_moved = 0.9 * \
-            self.MICROSTEP_RESOLUTION_MULTIPLIER[self._microstep_resolution] * \
-            self.GEAR_RATIO
-        if self._direction == DIRECTION.CCW:
-            degrees_moved = -degrees_moved
-        self._azimuth += degrees_moved
+
         GPIO.output(self.step_pin, 1)
         sleep(self.step_delay)
         GPIO.output(self.step_pin, 0)
         sleep(self.step_delay)
 
-    def teardown(self):
-        GPIO.cleanup()
+    def rotate(self, angle, cw=True):
+        steps = round(angle * 2.5 * 10 / 9)
+        if cw:
+            if self.current_pos + steps < 1000:
+                self.current_pos = self.current_pos + steps
+            else:
+                self.current_pos = self.current_pos + steps - 1000
+        elif not cw:
+            if self.current_pos - steps > 0:
+                self.current_pos = self.current_pos - steps
+            else:
+                self.current_pos = self.current_pos - steps + 1000
+        for _ in range(steps):
+            self.step()
 
+    def set_azimuth(self, azimuth):
+        """
+        Dev: K4YT3X IZAYOI
+        Date Created: Jan 16, 2018
+        Last Modified: Jan 16, 2018
+
+        This is the class that handles the iss pointer.
+        Creating an object of this class will initialize and start
+        the iss pointer.
+        """
+        # 360 degrees / steps per revolution * current steps
+        current_angle = 0.36 * self.current_pos
+        angle_to_rotate = azimuth - current_angle
+        if angle_to_rotate == 0:  # Do not rotate when change in angle is 0
+            pass
+        elif angle_to_rotate > 0:  # Rotate clockwise
+            GPIO.output(self.dir_pin, 0)
+            self.rotate(angle_to_rotate)
+        elif angle_to_rotate < 0:  # Rotate counter-clockwise
+            # Send signal to the direction pin so it rotates ccw
+            GPIO.output(self.dir_pin, 1)
+            self.rotate(-1 * angle_to_rotate, False)
+            GPIO.output(self.dir_pin, 0)  # Cut signal
+
+
+# --------------------------------- Begin Self Testing
+"""
+The code below is for self-testing when this file
+is ran independently. It takes an integer and a direction
+then rotates the motor.
+"""
 
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BOARD)
     stepper = Stepper(12, 11, 13, 15)
-    for _ in range(360*4):
-        stepper.step()
+    while True:
+        stepper.rotate(int(avl.gets("Angle")), avl.ask("CW?", True))
