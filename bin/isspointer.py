@@ -11,7 +11,7 @@
 Name: ISS Pointer Controller
 Dev: K4YT3X IZAYOI
 Date Created: Jan 15, 2018
-Last Modified: Jan 15, 2018
+Last Modified: December 12, 2018
 
 Description: This is the main script of the ISS Pointer.
 It creats objects of the motor contoller and the servo controller.servo
@@ -21,15 +21,15 @@ It creats objects of the motor contoller and the servo controller.servo
 from motor import Stepper
 from servo import Servo
 
+from avalon_framework import Avalon
 from datetime import datetime
-import avalon_framework as avl
 import ephem
 import json
 import math
 import time
 import urllib.request
 
-VERSION = "1.0 beta"
+VERSION = "1.0.0"
 
 
 def print_icon():
@@ -44,7 +44,7 @@ def print_icon():
     print('  |___| |____/  |____/    |_|      \____|\n')
     desc = "A Simple machine that points to the ISS\n"
     print((42 - len(desc)) // 2 * ' ' + desc)
-    print((39 - len(VERSION)) // 2 * ' ' + avl.FG.Y + VERSION + avl.FM.RST + '\n')
+    print((39 - len(VERSION)) // 2 * ' ' + Avalon.FG.Y + VERSION + Avalon.FM.RST + '\n')
 
 
 class debug:
@@ -159,7 +159,7 @@ class Isspointer:
             iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
             print(iss_tle)
             iss.compute(observer)
-            avl.info("ISS Position Update:")
+            Avalon.info("ISS Position Update:")
             print('Elevation :{}\nAzimuth :{}\n'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
             self.motor.set_azimuth(float(iss.az) * 180 / math.pi)
             self.servo.set_angle(float(iss.alt) * 180 / math.pi)
@@ -171,5 +171,5 @@ if __name__ == "__main__":
     isspointer = Isspointer()  # Creates ISS pointer object
     isspointer.start()  # Starts the pointer
 else:
-    avl.error("This file cannot be imported!")
-    avl.error("Please run this file independently.")
+    Avalon.error("This file cannot be imported!")
+    Avalon.error("Please run this file independently.")

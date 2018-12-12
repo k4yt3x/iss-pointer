@@ -8,13 +8,13 @@ Date Created: Dec 16, 2017
 Last Modfied: Dec 18, 2017
 
 Dev: K4YT3X IZAYOI
-Last Modified: Jan 16, 2018
+Last Modified: December 12, 2018
 """
-import avalon_framework as avl
+from avalon_framework import Avalon
 import RPi.GPIO as GPIO
 import time
 
-VERSION = "1.0 beta"
+VERSION = "1.0.0"
 
 
 class Servo:
@@ -73,4 +73,4 @@ the servo to that angle.
 if __name__ == "__main__":
     servo = Servo(16)  # Using pin 16 (BOARD)
     while True:
-        servo.set_angle(float(avl.gets("Angle")))
+        servo.set_angle(float(Avalon.gets("Angle: ")))

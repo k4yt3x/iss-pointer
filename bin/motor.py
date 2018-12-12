@@ -8,15 +8,15 @@ Date Created: Dec 16, 2017
 Last Modfied: Dec 18, 2017
 
 Dev: K4YT3X IZAYOI
-Last Modified: Jan 16, 2018
+Last Modified: December 12, 2018
 """
-import avalon_framework as avl
-import RPi.GPIO as GPIO
+from avalon_framework import Avalon
 from enum import Enum
 from time import sleep
-from exception import InvalidDirectionError
+from exceptions import InvalidDirectionError
+import RPi.GPIO as GPIO
 
-VERSION = "1.0 beta"
+VERSION = "1.0.0"
 
 
 class DIRECTION(Enum):
@@ -167,4 +167,4 @@ if __name__ == '__main__':
     GPIO.setmode(GPIO.BOARD)
     stepper = Stepper(12, 11, 13, 15)
     while True:
-        stepper.rotate(int(avl.gets("Angle")), avl.ask("CW?", True))
+        stepper.rotate(int(Avalon.gets("Angle")), Avalon.ask("CW?", True))
