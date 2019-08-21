@@ -1,5 +1,11 @@
 # Raspberry Pi ISS Pointer
 
+
+## 1.0.1 (August 21, 2019)
+
+1. Updating from PyEphem to skyfield (same author, same purpose, complete rebuild)
+
+
 ## 1.0.0 (December 12, 2018)
 
 1. Updated for avalon framework 1.6.x.
