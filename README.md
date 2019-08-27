@@ -1,9 +1,11 @@
 # Raspberry Pi ISS Pointer
 
 
-## 1.0.1 (August 21, 2019)
+## 1.0.1 (August 27, 2019)
 
-1. Updating from PyEphem to skyfield (same author, same purpose, complete rebuild)
+1. Updated from PyEphem to skyfield (same author, same purpose, complete rebuild)
+2. will add the ability to calculate the magnetic declination based on the location of the observer
+3. will add support for a compass (magnometer) to allow the pointer to not need to be aligned north.
 
 
 ## 1.0.0 (December 12, 2018)
