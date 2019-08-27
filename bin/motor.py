@@ -9,6 +9,9 @@ Last Modfied: Dec 18, 2017
 
 Dev: K4YT3X IZAYOI
 Last Modified: December 12, 2018
+
+Dev: Reimannsum
+Last Modified: Aug 27, 2019
 """
 from avalon_framework import Avalon
 from enum import Enum
@@ -16,7 +19,7 @@ from time import sleep
 from exceptions import InvalidDirectionError
 import RPi.GPIO as GPIO
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 
 class DIRECTION(Enum):
@@ -52,6 +55,8 @@ class Stepper(object):
         self.step_delay = 0.001
         self._microstep_resolution = 'full'
         self.current_pos = 0
+        # This will allow people to customize this for their own setup easily
+        self.steps_per_revolution = 1000
 
         self.setup()
 
@@ -122,12 +127,12 @@ class Stepper(object):
             if self.current_pos + steps < 1000:
                 self.current_pos = self.current_pos + steps
             else:
-                self.current_pos = self.current_pos + steps - 1000
+                self.current_pos = self.current_pos + steps - self.steps_per_revolution
         elif not cw:
             if self.current_pos - steps > 0:
                 self.current_pos = self.current_pos - steps
             else:
-                self.current_pos = self.current_pos - steps + 1000
+                self.current_pos = self.current_pos - steps + self.steps_per_revolution
         for _ in range(steps):
             self.step()
 
@@ -142,7 +147,7 @@ class Stepper(object):
         the iss pointer.
         """
         # 360 degrees / steps per revolution * current steps
-        current_angle = 0.36 * self.current_pos
+        current_angle = 360 / self.steps_per_revolution * self.current_pos
         angle_to_rotate = azimuth - current_angle
         if angle_to_rotate == 0:  # Do not rotate when change in angle is 0
             pass
