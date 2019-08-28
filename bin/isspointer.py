@@ -155,8 +155,8 @@ class Isspointer:
 
 			Avalon.info("ISS Position Update:")
 			print('Elevation :{}\nAzimuth :{}\n'.format(elevation, direction))
-			self.motor.set_azimuth(direction)
-			self.servo.set_angle(elevation)
+			self.motor.set_azimuth(float(direction))
+			self.servo.set_angle(float(elevation))
 			time.sleep(5)
 
 
