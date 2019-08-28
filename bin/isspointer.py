@@ -13,163 +13,157 @@ Dev: K4YT3X IZAYOI
 Date Created: Jan 15, 2018
 Last Modified: December 12, 2018
 
+Dev: Reimannsum
+Last Modified: Aug 27, 2019
+
 Description: This is the main script of the ISS Pointer.
-It creats objects of the motor contoller and the servo controller.servo
+It creates objects of the motor contoller and the servo controller.servo
 """
 
 # The motor controller and servo controller
+from avalon_framework import Avalon
 from motor import Stepper
 from servo import Servo
-
-from avalon_framework import Avalon
-from datetime import datetime
-import ephem
+from skyfield.api import Topos, load
 import json
-import math
 import time
 import urllib.request
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 
 def print_icon():
-    """
-    This prints the awsome ISS Pointer
-    project icon!
-    """
-    print('   ___   ____    ____      ____     ____')
-    print('  |_ _| / ___|  / ___|    |  _ \   / ___|')
-    print('   | |  \___ \  \___ \    | |_) | | |')
-    print('   | |   ___) |  ___) |   |  __/  | |___')
-    print('  |___| |____/  |____/    |_|      \____|\n')
-    desc = "A Simple machine that points to the ISS\n"
-    print((42 - len(desc)) // 2 * ' ' + desc)
-    print((39 - len(VERSION)) // 2 * ' ' + Avalon.FG.Y + VERSION + Avalon.FM.RST + '\n')
+	"""
+	This prints the awsome ISS Pointer
+	project icon!
+	"""
+	print('   ___   ____    ____      ____     ____')
+	print('  |_ _| / ___|  / ___|    |  _ \   / ___|')
+	print('   | |  \___ \  \___ \    | |_) | | |')
+	print('   | |   ___) |  ___) |   |  __/  | |___')
+	print('  |___| |____/  |____/    |_|      \____|\n')
+	desc = "A Simple machine that points to the ISS\n"
+	print((42 - len(desc)) // 2 * ' ' + desc)
+	print((39 - len(VERSION)) // 2 * ' ' + Avalon.FG.Y + VERSION + Avalon.FM.RST + '\n')
 
 
 class debug:
 
-    def __init__(self, activated):
-        self.activated = activated
+	def __init__(self, activated):
+		self.activated = activated
 
-    def debugger(self):
-        pass
+	def debugger(self):
+		pass
 
 
 class Isspointer:
-    """
-    Dev: K4YT3X IZAYOI
-    Date Created: Jan 15, 2018
-    Last Modified: Jan 15, 2018
+	"""
+	Dev: K4YT3X IZAYOI
+	Date Created: Jan 15, 2018
+	Last Modified: Jan 15, 2018
 
-    This is the class that handles the iss pointer.
-    Creating an object of this class will initialize and start
-    the iss pointer.
-    """
+	Dev: Reimannsum
+	I think I want to have this save the servo position in a file
+	so that I can make sure it doesn't turn over and over in one
+	direction and tangle the cords of the motors
 
-    def __init__(self):
-        self.lat, self.lon = self._get_ISS_coordinates()
-        self.motor = self._setup_motor()
-        self.servo = self._setup_servo()
+	Last Modified: Aug 27, 2019
 
-    def _setup_motor(self):
-        """
-        Creates and returns an object
-        of the Stepper motor controller
-        """
-        return Stepper(12, 11, 13, 15)
+	This is the class that handles the iss pointer.
+	Creating an object of this class will initialize and start
+	the iss pointer.
 
-    def _setup_servo(self):
-        """
-        Creates and returns an object
-        of the Servo controller
-        """
-        return Servo(16)
 
-    def _get_ISS_coordinates(self):
-        """
-        Dev: K4YT3X IZAYOI
-        Date Created: Jan 15, 2018
-        Last Modified: Jan 15, 2018
+	"""
 
-        This method requests the current coordinate of the ISS
-        from open notify in json format and parses it.
+	def __init__(self):
+		"""
+		Here I get the position of the pointer, the compass heading
+		and implement the geomagnetic declination or north off set
 
-        Returns tuple (latitude, longitude)
-        """
-        req = urllib.request.Request("http://api.open-notify.org/iss-now.json")
-        response = urllib.request.urlopen(req)
+		Dev: Reimannsum
+		Last Modified: Aug 27, 2019
+		"""
 
-        obj = json.loads(response.read().decode('utf-8'))
-        return obj['iss_position']['latitude'], obj['iss_position']['longitude']
+		# I don't know that this is required
+		self.lat, self.lon = self._get_ISS_coordinates()
+		self.motor = self._setup_motor()
+		self.servo = self._setup_servo()
 
-    def _get_iss_tle(self):
-        """
-        Dev: K4YT3X IZAYOI
-        Date Created: Jan 15, 2018
-        Last Modified: Jan 15, 2018
+	def _setup_motor(self):
+		"""
+		Creates and returns an object
+		of the Stepper motor controller
+		"""
+		return Stepper(12, 11, 13, 15)
 
-        This method requests a list of satellite
-        TLE (the NORAD Two-Line Element format (TLE)) info.
+	def _setup_servo(self):
+		"""
+		Creates and returns an object
+		of the Servo controller
+		"""
+		return Servo(16)
 
-        TLE should contain 3 lines
+	def _get_ISS_coordinates(self):
+		"""
+		Dev: K4YT3X IZAYOI
+		Date Created: Jan 15, 2018
+		Last Modified: Jan 15, 2018
 
-        returns list [tle_line_1, tle_line_2, tle_line_3]
-        """
-        return "ISS", "1 25544U 98067A   18015.54922922  .00016717  00000-0  10270-3 0  9007", "2 25544  51.6405  59.6508 0003688  17.3608 342.7670 15.54317764 14777"
-        iss_tle = []
-        try:
-            req = urllib.request.Request("https://www.celestrak.com/NORAD/elements/stations.txt")
-            response = urllib.request.urlopen(req)
-        except Exception as e:
-            return False
-        hit = False
-        counter = 0
-        for line in response.read().decode('utf-8').split('\n'):
-            if "ISS (ZARYA)" in line:
-                hit = True
-            if hit and counter < 3:
-                iss_tle.append(line)
-                counter += 1
-            else:
-                return iss_tle
+		This method requests the current coordinate of the ISS
+		from open notify in json format and parses it.
 
-    def start(self):
-        """
-        Dev: K4YT3X IZAYOI
-        Date Created: Jan 15, 2018
-        Last Modified: Jan 16, 2018
+		Returns tuple (latitude, longitude)
+		"""
+		req = urllib.request.Request("http://api.open-notify.org/iss-now.json")
+		response = urllib.request.urlopen(req)
 
-        This method is the main ISS pointer controller
-        it runs infinitively until Ctrl^C is pressed.
-        """
-        iss_default_tle = "ISS", "1 25544U 98067A   18015.54922922  .00016717  00000-0  10270-3 0  9007", "2 25544  51.6405  59.6508 0003688  17.3608 342.7670 15.54317764 14777"
-        observer = ephem.Observer()
-        observer.lat, observer.lon = '43.435296', '-80.464363'
-        while True:
-            observer.date = datetime.utcnow()
-            print(datetime.utcnow())
+		obj = json.loads(response.read().decode('utf-8'))
+		return obj['iss_position']['latitude'], obj['iss_position']['longitude']
 
-            iss_live_tle = self._get_iss_tle()
-            if iss_live_tle:
-                iss_tle = iss_live_tle
-            else:
-                iss_tle = iss_default_tle
 
-            iss = ephem.readtle(iss_tle[0], iss_tle[1], iss_tle[2])
-            print(iss_tle)
-            iss.compute(observer)
-            Avalon.info("ISS Position Update:")
-            print('Elevation :{}\nAzimuth :{}\n'.format(float(iss.alt) * 180 / math.pi, float(iss.az) * 180 / math.pi))
-            self.motor.set_azimuth(float(iss.az) * 180 / math.pi)
-            self.servo.set_angle(float(iss.alt) * 180 / math.pi)
-            time.sleep(2)
+	def start(self):
+		"""
+		Dev: K4YT3X IZAYOI
+		Date Created: Jan 15, 2018
+		Last Modified: Jan 16, 2018
+
+		Dev: Reimannsum
+		Last Modified: Aug 27, 2019
+
+		This method is the main ISS pointer controller
+		it runs infinitively until Ctrl^C is pressed.
+		"""
+		ts = load.timescale()
+		stations_url = 'http://celestrak.com/NORAD/elements/stations.txt'
+		satellites = load.tle(stations_url)
+		satellite = satellites['ISS (ZARYA)']
+		observer = Topos('42.5337N', '83.7384W')
+		while True:
+			t = ts.now()
+			days = t - satellite.epoch
+			if abs(days) > 14:
+				satellites = load.tle(stations_url, reload=True)
+				satellite = satellites['ISS (ZARYA)']
+			difference = satellite - observer
+			topocentric = difference.at(t)
+			alt, az, distance = topocentric.altaz()
+			# unless the radians would be more use useful
+			elevation =  alt.degrees
+			# unless the radians would be more use useful
+			direction = az.degrees
+
+			Avalon.info("ISS Position Update:")
+			print('Elevation :{}\nAzimuth :{}\n'.format(elevation, direction))
+			self.motor.set_azimuth(direction)
+			self.servo.set_angle(elevation)
+			time.sleep(5)
 
 
 if __name__ == "__main__":
-    print_icon()
-    isspointer = Isspointer()  # Creates ISS pointer object
-    isspointer.start()  # Starts the pointer
+	print_icon()
+	isspointer = Isspointer()  # Creates ISS pointer object
+	isspointer.start()  # Starts the pointer
 else:
-    Avalon.error("This file cannot be imported!")
-    Avalon.error("Please run this file independently.")
+	Avalon.error("This file cannot be imported!")
+	Avalon.error("Please run this file independently.")
